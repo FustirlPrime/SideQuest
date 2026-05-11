@@ -1,0 +1,1656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HARD SIDEQUESTS — Level 99 Edition</title>
+<link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --card: #12121a;
+    --border: #2a2a3a;
+    --accent: #f5c400;
+    --accent2: #ff4f1f;
+    --accent3: #00e5ff;
+    --green: #39ff14;
+    --text: #e8e8f0;
+    --muted: #7a7a9a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Noise texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.5;
+  }
+
+  header {
+    padding: 60px 24px 40px;
+    text-align: center;
+    position: relative;
+  }
+
+  header::after {
+    content: '';
+    display: block;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), var(--accent2), transparent);
+    margin-top: 40px;
+  }
+
+  .tag {
+    display: inline-block;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent2);
+    border: 1px solid var(--accent2);
+    padding: 4px 12px;
+    margin-bottom: 20px;
+  }
+
+  h1 {
+    font-family: 'Black Ops One', sans-serif;
+    font-size: clamp(42px, 10vw, 90px);
+    line-height: 0.9;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 60%, #ff008c 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .subtitle {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .budget-bar {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-top: 28px;
+  }
+
+  .budget-pill {
+    background: rgba(245,196,0,0.08);
+    border: 1px solid var(--accent);
+    border-radius: 2px;
+    padding: 8px 20px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+
+  /* Filter bar */
+  .filters {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 24px 24px 0;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .filter-btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 8px 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 2px;
+  }
+
+  .filter-btn:hover, .filter-btn.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(245,196,0,0.06);
+  }
+
+  /* Grid */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+    padding: 32px 24px 80px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* Card */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+    animation: fadeIn 0.4s ease both;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: var(--cat-color, var(--accent));
+    box-shadow: 0 12px 40px rgba(0,0,0,0.6), 0 0 24px rgba(245,196,0,0.06);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-accent-bar {
+    height: 3px;
+    background: var(--cat-color, var(--accent));
+  }
+
+  .card-header {
+    padding: 20px 20px 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .quest-num {
+    font-family: 'Black Ops One', sans-serif;
+    font-size: 11px;
+    color: var(--cat-color, var(--accent));
+    letter-spacing: 2px;
+    min-width: 32px;
+    padding-top: 3px;
+    opacity: 0.7;
+  }
+
+  .card-title-block { flex: 1; }
+
+  .card-category {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--cat-color, var(--accent));
+    margin-bottom: 4px;
+  }
+
+  .card-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 22px;
+    line-height: 1.1;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text);
+  }
+
+  .card-emoji {
+    font-size: 28px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .card-tagline {
+    padding: 0 20px 12px;
+    font-size: 13px;
+    color: var(--muted);
+    font-style: italic;
+    line-height: 1.4;
+  }
+
+  .meta-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 0 20px 16px;
+  }
+
+  .meta-chip {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 2px;
+  }
+
+  .chip-diff {
+    background: rgba(255,79,31,0.12);
+    border: 1px solid rgba(255,79,31,0.3);
+    color: var(--accent2);
+  }
+  .chip-diff.easy { background: rgba(57,255,20,0.08); border-color: rgba(57,255,20,0.3); color: var(--green); }
+  .chip-diff.medium { background: rgba(0,229,255,0.08); border-color: rgba(0,229,255,0.3); color: var(--accent3); }
+
+  .chip-budget {
+    background: rgba(245,196,0,0.1);
+    border: 1px solid rgba(245,196,0,0.3);
+    color: var(--accent);
+  }
+
+  .chip-walk {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 0 20px;
+  }
+
+  .card-body {
+    padding: 16px 20px 20px;
+  }
+
+  .section-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .needs-list {
+    list-style: none;
+    margin-bottom: 16px;
+  }
+
+  .needs-list li {
+    font-size: 13px;
+    color: var(--text);
+    padding: 3px 0 3px 16px;
+    position: relative;
+    line-height: 1.4;
+  }
+
+  .needs-list li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--cat-color, var(--accent));
+    font-size: 10px;
+    top: 5px;
+  }
+
+  .steps-list {
+    list-style: none;
+    counter-reset: steps;
+  }
+
+  .steps-list li {
+    counter-increment: steps;
+    font-size: 13px;
+    color: var(--text);
+    padding: 5px 0 5px 28px;
+    position: relative;
+    line-height: 1.4;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+
+  .steps-list li:last-child { border-bottom: none; }
+
+  .steps-list li::before {
+    content: counter(steps);
+    position: absolute;
+    left: 0;
+    width: 20px;
+    height: 20px;
+    background: var(--cat-color, var(--accent));
+    color: var(--bg);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 2px;
+    top: 5px;
+  }
+
+  .pro-tip {
+    margin-top: 14px;
+    background: rgba(245,196,0,0.05);
+    border-left: 2px solid var(--accent);
+    padding: 10px 12px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+    border-radius: 0 2px 2px 0;
+  }
+
+  .pro-tip strong { color: var(--accent); font-family: 'Barlow Condensed', sans-serif; letter-spacing: 1px; font-size: 10px; text-transform: uppercase; }
+
+  /* Expand toggle */
+  .expand-btn {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 12px;
+    cursor: pointer;
+    transition: color 0.2s, background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .expand-btn:hover {
+    color: var(--text);
+    background: rgba(255,255,255,0.03);
+  }
+
+  .expand-btn .arrow {
+    display: inline-block;
+    transition: transform 0.25s;
+    font-size: 10px;
+  }
+
+  .card.expanded .arrow { transform: rotate(180deg); }
+
+  .card-details {
+    display: none;
+    border-top: 1px solid var(--border);
+  }
+
+  .card.expanded .card-details { display: block; }
+
+  /* Legend */
+  .legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 0 24px 32px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+  }
+
+  .card[data-cat="sport"] { --cat-color: var(--accent2); }
+  .card[data-cat="chill"] { --cat-color: var(--accent3); }
+  .card[data-cat="gaming"] { --cat-color: var(--green); }
+  .card[data-cat="food"] { --cat-color: var(--accent); }
+  .card[data-cat="wild"] { --cat-color: #d966ff; }
+
+  .hidden { display: none !important; }
+
+  footer {
+    text-align: center;
+    padding: 32px;
+    border-top: 1px solid var(--border);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  footer span { color: var(--accent); }
+
+  /* Wheel Overlay */
+  .wheel-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 10, 15, 0.95);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    backdrop-filter: blur(10px);
+  }
+  .wheel-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+  .close-wheel {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-size: 30px;
+    cursor: pointer;
+    z-index: 10000;
+  }
+  .wheel-container {
+    position: relative;
+    width: 90vw;
+    max-width: 500px;
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  #wheelCanvas {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    box-shadow: 0 0 40px rgba(245,196,0,0.2);
+    transition: transform 4s cubic-bezier(0.1, 0.9, 0.2, 1);
+  }
+  .wheel-pointer {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 50px;
+    color: var(--accent);
+    z-index: 10;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.8));
+  }
+  .spin-btn {
+    font-family: 'Black Ops One', sans-serif;
+    font-size: 24px;
+    padding: 16px 40px;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+    border: none;
+    border-radius: 4px;
+    color: var(--bg);
+    cursor: pointer;
+    text-transform: uppercase;
+    box-shadow: 0 4px 15px rgba(255,79,31,0.4);
+    transition: transform 0.1s, box-shadow 0.1s;
+  }
+  .spin-btn:hover {
+    box-shadow: 0 6px 20px rgba(255,79,31,0.6);
+  }
+  .spin-btn:active {
+    transform: scale(0.95);
+  }
+  .spin-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .winner-popup {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    background: var(--card);
+    border: 2px solid var(--accent);
+    padding: 40px;
+    border-radius: 8px;
+    text-align: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+    width: 90%;
+    max-width: 400px;
+    z-index: 20;
+  }
+  .winner-popup.active {
+    opacity: 1;
+    pointer-events: all;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  #winnerText {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 32px;
+    line-height: 1.1;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    color: var(--text);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="tag">■ Real-Life Chaos Challenges ■</div>
+  <h1>Hard<br>Sidequests</h1>
+  <p class="subtitle">Level 99 Edition — 3 Players · 30 Missions</p>
+  <div class="budget-bar">
+    <div class="budget-pill">💰 Max 10€ / person</div>
+    <div class="budget-pill">👥 30€ total group</div>
+    <div class="budget-pill">🥾 5km max walking</div>
+    <div class="budget-pill">🏆 30€ / person overall</div>
+  </div>
+  <div style="margin-top: 40px; margin-bottom: -10px;">
+    <button class="spin-btn" style="font-size: 20px; padding: 12px 30px;" onclick="openWheel()">🎲 SPIN FOR RANDOM QUEST 🎲</button>
+  </div>
+</header>
+
+<div class="filters">
+  <button class="filter-btn active" onclick="filter('all', this)">All (30)</button>
+  <button class="filter-btn" onclick="filter('sport', this)">🔥 Sport</button>
+  <button class="filter-btn" onclick="filter('chill', this)">🌿 Chill</button>
+  <button class="filter-btn" onclick="filter('gaming', this)">🎮 Gaming</button>
+  <button class="filter-btn" onclick="filter('food', this)">🍖 Food</button>
+  <button class="filter-btn" onclick="filter('wild', this)">💀 Wild</button>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--accent2)"></div> Sport</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--accent3)"></div> Chill</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> Gaming</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div> Food</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#d966ff"></div> Wild</div>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<div class="wheel-overlay" id="wheelOverlay">
+  <button class="close-wheel" onclick="closeWheel()">✕</button>
+  <div class="wheel-container">
+    <div class="wheel-pointer">▼</div>
+    <canvas id="wheelCanvas" width="600" height="600"></canvas>
+  </div>
+  <button class="spin-btn" id="spinBtn" onclick="spinWheel()" style="margin-top: 40px;">SPIN THE WHEEL</button>
+  
+  <div class="winner-popup" id="winnerPopup">
+    <div style="font-size: 50px; margin-bottom: 10px;" id="winnerEmoji">🎉</div>
+    <div style="font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 2px; color: var(--accent); margin-bottom: 8px; text-transform: uppercase;" id="winnerCat">Category</div>
+    <h2 id="winnerText">Quest Name</h2>
+    <p id="winnerTagline" style="color: var(--muted); margin-bottom: 24px; font-style: italic; font-size: 14px; line-height: 1.4;"></p>
+    <button class="filter-btn active" style="padding: 12px 24px; font-size: 16px; border-color: var(--accent); color: var(--accent); background: rgba(245,196,0,0.1);" onclick="closeWheelAndShow(winnerId)">ACCEPT QUEST</button>
+  </div>
+</div>
+
+<footer>Complete all 30 · Stay safe · <span>Make memories</span> · Level 99 Champions</footer>
+
+<script>
+const quests = [
+  {
+    id: 1,
+    cat: "food",
+    emoji: "🔥",
+    title: "Guerrilla BBQ",
+    tagline: "A park, a grill, zero restaurants. The holy trio of meat, smoke, and chaos.",
+    diff: "easy",
+    diffLabel: "Easy",
+    budget: "~6€/person",
+    walk: "0–1 km",
+    needs: [
+      "Disposable BBQ grill (≈3€ at supermarket)",
+      "Sausages / chicken skewers (~10€ split 3 ways)",
+      "Bread rolls (1€)",
+      "Mustard, ketchup (shared cost)",
+      "Salt, pepper, tinfoil (from home)",
+      "A park with fire allowed OR a firepit spot"
+    ],
+    steps: [
+      "Scout your park — look for fire-allowed zones or a designated BBQ area.",
+      "Buy the disposable grill and split the meat budget: aim for 2–3 items per person.",
+      "Light the grill 20 minutes before you want to eat. Fan it or blow through a straw.",
+      "Season everything before it hits the grill. Do not skip this.",
+      "Cook sausages first (forgiving), then any marinated pieces.",
+      "Eat standing up like warriors. Bonus points for eating directly off the grill with sticks.",
+      "Leave zero trace. Take the cold grill with you."
+    ],
+    tip: "Marinate the chicken the night before in olive oil, garlic, paprika, and lemon. Game changer for €0 extra."
+  },
+  {
+    id: 2,
+    cat: "wild",
+    emoji: "💀",
+    title: "Trash Bag Slip N Slide",
+    tagline: "Summer's most chaotic downgrade of engineering. Requires: a hill and zero dignity.",
+    diff: "medium",
+    diffLabel: "Medium",
+    budget: "~4€/person",
+    walk: "1–2 km",
+    needs: [
+      "6–10 heavy-duty black trash bags (~2€)",
+      "1 roll duct tape (~2€)",
+      "Garden hose or 4x 10L buckets of water",
+      "Dish soap — Dawn or generic (~1€)",
+      "A smooth grassy hill, 20–40ft, no rocks",
+      "Old clothes or bathing suit"
+    ],
+    steps: [
+      "Walk the entire hill and runout zone. Remove every rock, stick, and sprinkler head.",
+      "Lay trash bags end-to-end overlapping 6 inches. Tape all seams tight.",
+      "Tape up the sides to create a channel so you don't slide off.",
+      "Soak the whole surface — absolutely soaking wet.",
+      "Apply a generous line of dish soap down the center. More than you think.",
+      "Sprint start: dive stomach-first or slide feet-first. One person wets the slide during use.",
+      "Re-soap every 5–6 runs."
+    ],
+    tip: "Add a kiddie pool or tarp at the bottom as a landing zone. Two bags wide = side-by-side racing."
+  },
+  {
+    id: 3,
+    cat: "chill",
+    emoji: "⛺",
+    title: "Hike & Camp the Hill",
+    tagline: "5km round trip. Big views. Sleep under stars. Costs less than a pizza.",
+    diff: "easy",
+    diffLabel: "Easy",
+    budget: "~5€/person",
+    walk: "≤5 km round trip",
+    needs: [
+      "Small 20–30L daypack each",
+      "1-person tent or bivy (borrow or share)",
+      "Sleeping bag rated for the night temp",
+      "Water 1.5L, instant noodles or freeze-dried meal (~2€)",
+      "Headlamp, lighter",
+      "Extra jacket — hilltops are cold"
+    ],
+    steps: [
+      "Find your hill via AllTrails or 'camping allowed hills near me'. Aim for 2–3km up.",
+      "Leave late afternoon to arrive at the top with 1 hour of daylight left.",
+      "Set up your tent BEFORE dark. Seriously.",
+      "Cook your meal. Watch the sunset. It's literally the whole point.",
+      "Cowboy camp if the sky is clear (sleeping bag only, no tent). Peak experience.",
+      "Stargaze. Download a star map app (Sky Map, Stellarium — free).",
+      "Pack out everything. Head back at sunrise."
+    ],
+    tip: "Bring a small speaker. Summit music hits completely different at 600m elevation."
+  },
+  {
+    id: 4,
+    cat: "sport",
+    emoji: "⚡",
+    title: "Turbo Shopping Cart",
+    tagline: "Speed. Wheels. Glory. Build a motorized cart and hit the open (private) asphalt.",
+    diff: "hard",
+    diffLabel: "Hard",
+    budget: "€€€ (shared project ~25–30€ parts)",
+    walk: "0 km (you drive)",
+    needs: [
+      "1 sturdy metal shopping cart (owner's permission)",
+      "2–4 power wheels or scooter motors (12–24V)",
+      "24V LiPo or deep cycle battery",
+      "ESC (electronic speed controller)",
+      "E-bike throttle trigger",
+      "Steel angle iron + bolts for motor mounts",
+      "Rubber-coated drive wheels",
+      "Helmet, knee pads, gloves — mandatory"
+    ],
+    steps: [
+      "Strip any plastic from the lower frame to expose wheel hubs.",
+      "Fabricate motor mounts so the drive wheel presses against rear cart wheels.",
+      "Wire motors to the ESC; connect battery with inline fuse.",
+      "Mount throttle on handlebar. Use zip ties to route wiring neatly.",
+      "Install a big red kill switch on the frame. Non-negotiable.",
+      "Test at low speed in a flat open area first.",
+      "Once it handles well: film absolutely everything."
+    ],
+    tip: "Friction drive (rubber wheel pressing cart wheel) requires zero welding. Keep it under 25 mph."
+  },
+  {
+    id: 5,
+    cat: "gaming",
+    emoji: "🎮",
+    title: "IRL Mario Kart Race",
+    tagline: "Scooters, bikes, or on foot. Make your own course. Power-ups mandatory.",
+    diff: "easy",
+    diffLabel: "Easy",
+    budget: "~2€/person",
+    walk: "2–4 km course",
+    needs: [
+      "Bikes, kick scooters, or just running shoes",
+      "Chalk or tape to mark the course",
+      "3x water balloons per player (power-ups, ~1€)",
+      "Bandanas or colored tape to ID teams",
+      "A phone with a stopwatch",
+      "A park or quiet area with varied terrain"
+    ],
+    steps: [
+      "Design a 1–2km looped course with chalk arrows. Include a hill, a flat sprint, and a turn section.",
+      "Define power-up zones: marked spots where you can grab a pre-placed item.",
+      "Power-up items: water balloon = hit someone to slow them (5 second stop), cone = place on the course as an obstacle.",
+      "3 laps. Each lap = 1 eliminated player (slowest time).",
+      "Final player standing wins. Losers buy the winner a snack.",
+      "Film it and create a fake race commentary overdub."
+    ],
+    tip: "Bonus round: blindfold race with a partner navigating by voice only. Pure chaos."
+  },
+  {
+    id: 6,
+    cat: "food",
+    emoji: "🍳",
+    title: "Outdoor Egg Iron Chef",
+    tagline: "1 camping stove, 3 players, 5 ingredients each. Best dish wins. Judges: yourselves.",
+    diff: "easy",
+    diffLabel: "Easy",
+    budget: "~6€/person",
+    walk: "0 km",
+    needs: [
+      "1 camping stove or portable gas burner (~5€ borrow or split)",
+      "6 eggs (shared, ~1.50€)",
+      "Each player buys 3–4 surprise ingredients (stay secret until reveal)",
+      "1 pan (bring from home)",
+      "Salt, pepper, butter (from home)",
+      "Plates, forks"
+    ],
+    steps: [
+      "Each player secretly buys 3–4 ingredients (max 2€ budget each). Keep them hidden.",
+      "Reveal all ingredients at the same time. You MUST use your own + 1 ingredient from each other player.",
+      "30 minutes to cook. One burner between all three, take turns.",
+      "Plate up with care. Presentation counts.",
+      "Rate each dish on: taste, creativity, and use of chaos ingredients.",
+      "Winner gets to pick the next sidequest."
+    ],
+    tip: "Forbidden ingredients (add if you want chaos): raw onion, anchovies, energy drink, or leftover bread."
+  },
+  {
+    id: 7,
+    cat: "gaming",
+    emoji: "🎯",
+    title: "Scavenger Hunt Speedrun",
+    tagline: "One list. The whole neighborhood. First back wins eternal glory.",
+    diff: "easy",
+    diffLabel: "Easy",
+    budget: "~0€/person",
+    walk: "3–5 km",
+    needs: [
+      "Your phones",
+      "A printed or shared Google Doc list",
+      "A timer",
+      "Optional: 1€ for a reward snack for winner"
+    ],
+    steps: [
+      "Generate your 20-item list the night before (see tip for ideas).",
+      "Split into solo mode (3 players racing) or 2v1 teams.",
+      "Start the timer. First player to photograph or collect all 20 items wins.",
+      "Photo proof required for each item. Blurry shots don't count.",
+      "Set a 90-minute time limit. Most items collected wins if nobody finishes.",
+      "Debrief over drinks — share the best/weirdest finds."
+    ],
+    tip: "Good items: something red and round, a receipt from today, a dog, a stranger's permission slip (ask them to sign your paper), a leaf bigger than your hand, something with a smiley face."
+  },
+  {
+    id: 8,
+    cat: "chill",
+    emoji: "🌅",
+    title: "Sunrise Mission",
+    tagline: "Set the alarm for 4:30 AM. Watch the sun rise. Feel like a god.",
+    diff: "easy",
+    diffLabel: "Easy",
+    budget: "~3€/person",
+    walk: "1–3 km",
+    needs: [
+      "Sleeping bags or thick blankets",
+      "Thermos of coffee or hot chocolate (~1.50€ for supplies)",
+      "Snacks (croissants, bananas — ~1.50€)",
+      "A viewpoint, hill, rooftop, or open field",
+      "A phone for sunrise time (check online the night before)"
+    ],
+    steps: [
+      "Check sunrise time the night before. Aim to arrive 20 minutes early.",
+      "Get to your spot in the dark — this is part of the experience.",
+      "Lay out sleeping bags or blankets. Get horizontal.",
+      "Watch the sky go from black to navy to orange to gold.",
+      "Eat breakfast as the sun comes up. Hot coffee mandatory.",
+      "Stay until full daylight. Then either sleep back home or start the day fully charged."
+    ],
+    tip: "The 20 minutes right before sunrise (civil twilight) are secretly the best part. Don't miss them."
+  },
+  {
+    id: 9,
+    cat: "sport",
+    emoji: "🥊",
+    title: "Pillow Sumo Tournament",
+    tagline: "A circle, two pillows, one survivor. Ancient sport. Modern chaos.",
+    diff: "easy",
+    diffLabel: "Easy",
+    budget: "~0€/person",
+    walk: "0 km",
+    needs: [
+      "2 large pillows (from home)",
+      "A flat grassy area or a room with clear floor space",
+      "Chalk or rope to mark a 2m diameter ring",
+      "Optional: silly costumes"
+    ],
+    steps: [
+      "Mark a 2-meter circle on the ground. This is the sumo ring.",
+      "Two players face off, each holding one pillow. Third player is referee.",
+      "Goal: use your pillow to knock the opponent out of the ring or knock them off balance.",
+      "No hitting faces. No grabbing. Pillow contact only.",
+      "Best of 3 per match. Round-robin to find the champion.",
+      "Add optional rules: one hand behind back, eyes closed for first 3 seconds, spin before fighting."
+    ],
+    tip: "Play on grass — falls are softer. Wet grass after rain = slip mode = guaranteed chaos."
+  },
+  {
+    id: 10,
+    cat: "wild",
+    emoji: "🧊",
+    title: "Cold Water Plunge",
+    tagline: "Find a river, a lake, or a cold ocean. Get in. Survive. Feel reborn.",
+    diff: "medium",
+    diffLabel: "Medium",
+    budget: "~0€/person",
+    walk: "2–5 km",
+    needs: [
+      "Towels",
+      "Dry clothes to change into",
+      "Sandals or water shoes",
+      "A river, lake, or sea with safe access (no current, no deep drop-offs)",
+      "Warm drink in a thermos for after"
+    ],
+    steps: [
+      "Research your spot beforehand. Check depth, current, and access. Tell someone where you're going.",
+      "Arrive and assess the water before anyone gets in. Scout entry and exit points.",
+      "Warm up with light movement first — 5 minutes of jumping jacks.",
+      "Go in together on 3. No slow entry — commit fully.",
+      "Stay in for at least 30 seconds (work up to 2 minutes over time).",
+      "Get out. Dry off fast. Warm drink immediately.",
+      "Rate the experience. Then plan when you'll do it again."
+    ],
+    tip: "The first 10 seconds feel horrible. Seconds 11–30 feel electric. After 60 seconds you'll feel invincible for 2 hours."
+  },
+  {
+    id: 11,
+    cat: "gaming",
+    emoji: "🃏",
+    title: "Street Chess Hustle",
+    tagline: "Set up a board in a park. Challenge strangers. Build a reputation.",
+    diff: "easy",
+    diffLabel: "Easy",
+    budget: "~0€/person (or ~5€ for a cheap set)",
+    walk: "1 km",
+    needs: [
+      "A chess set (borrow, or buy cheap ~5€ from charity shop)",
+      "A folding table or just a blanket on the ground",
+      "A handwritten sign: 'PLAY US FOR FUN'",
+      "Snacks to eat between games",
+      "Optional: timer (~3€ for a basic chess clock)"
+    ],
+    steps: [
+      "Find a busy park or square. Set up your board visibly.",
+      "Put up the sign. This is 50% of the battle.",
+      "Play each other while waiting for challengers.",
+      "When a stranger approaches: welcome them. One of you plays, others watch and hype.",
+      "Keep a win/loss tally on a piece of paper. Show it to challengers.",
+      "Stay 2 hours. Document the most interesting game or player you encounter."
+    ],
+    tip: "You don't have to be good. The fun is in the challenge and the conversations. Everyone has a chess story."
+  },
+  {
+    id: 12,
+    cat: "food",
+    emoji: "🥐",
+    title: "Boulangerie Speed Run",
+    tagline: "One bakery, 5€ each, blindfolded pick. Taste test. No regrets.",
+    diff: "easy",
+    diffLabel: "Easy",
+    budget: "~5€/person",
+    walk: "1 km",
+    needs: [
+      "5€ each",
+      "A good local bakery",
+      "A bandana or cloth for the blindfold reveal",
+      "A park bench or picnic blanket to eat at"
+    ],
+    steps: [
+      "Each person enters the bakery solo. Eyes open to pick — but you cannot tell the others what you chose.",
+      "Everyone buys 2–3 items. Keep bags closed until the reveal.",
+      "Find a bench or picnic spot.",
+      "Reveal simultaneously. Arrange everything on the blanket like a spread.",
+      "Taste everything. Rate each item out of 10.",
+      "The person with the highest average score across all items wins bragging rights."
+    ],
+    tip: "Rule variation: point to an item randomly with eyes closed (let the bakery worker pick). Ultimate chaos mode."
+  },
+  {
+    id: 13,
+    cat: "sport",
+    emoji: "🏹",
+    title: "Ultimate Frisbee 3v0",
+    tagline: "No opponents needed. Set up target goals, trick shots, and distance records.",
+    diff: "easy",
+    diffLabel: "Easy",
+    budget: "~3€/person",
+    walk: "1 km to a park",
+    needs: [
+      "1 frisbee (~5€ split, or borrow)",
+      "4 sticks or jumpers as goal markers",
+      "A large open field or park",
+      "Chalk to mark throw lines"
+    ],
+    steps: [
+      "Set up 2 goals ~30m apart using jumpers or sticks.",
+      "Game 1 — Around the World: each player throws from a set sequence of 6 spots. 1 point per clean catch.",
+      "Game 2 — Trick Shot Challenge: each player invents a trick throw. Others try to replicate it. Style points judge.",
+      "Game 3 — Distance Record: how far can you throw and have it caught? Measure with steps.",
+      "Game 4 — Blindfold Pass: thrower aims at the sound of the catcher clapping. 5 attempts each.",
+      "Tally all points. Champion gets to design next week's sidequest."
+    ],
+    tip: "A frisbee in wind is a different beast. Learn the angle trick: tilt into the wind for a straight throw."
+  },
+  {
+    id: 14,
+    cat: "chill",
+    emoji: "🎨",
+    title: "Chalk Mural Session",
+    tagline: "Find a big wall or pavement. Cover it in something unforgettable.",
+    diff: "easy",
+    diffLabel: "Easy",
+    budget: "~4€/person",
+    walk: "1–2 km",
+    needs: [
+      "Box of thick chalk (~3€)",
+      "A large paved area (public square, empty car park, basketball court)",
+      "Reference image on phone if you want one",
+      "A theme decided in advance (or chaos improvisation)"
+    ],
+    steps: [
+      "Pick your canvas. Bigger is better. Public squares, car parks on weekends, school courts.",
+      "Agree on a theme OR go full improv chaos — each person draws their own corner and they connect somehow.",
+      "Start with outlines (big shapes first) before filling in detail.",
+      "Work for at least 90 minutes — commitment to the bit is the whole game.",
+      "Take an aerial photo from a high angle (stand on a bench or wall) for the full effect.",
+      "Leave it as public art. Come back the next day to see if anyone added to it."
+    ],
+    tip: "Wet chalk is more vibrant. Dip chalk in water before drawing for saturated color. Works best on rough pavement."
+  },
+  {
+    id: 15,
+    cat: "wild",
+    emoji: "🌌",
+    title: "Midnight City Wander",
+    tagline: "A city after midnight is a different world. No plan. Follow curiosity.",
+    diff: "medium",
+    diffLabel: "Medium",
+    budget: "~0€/person (or ~5€ for late snacks)",
+    walk: "3–5 km",
+    needs: [
+      "Comfortable shoes",
+      "Fully charged phones",
+      "A €5 budget for late-night food if desired",
+      "One rule: no GPS for the first 30 minutes"
+    ],
+    steps: [
+      "Start at midnight or later. Pick a direction and walk.",
+      "First 30 minutes: no GPS. Navigate by landmarks, instinct, and vibes.",
+      "Find the quietest street you can. Stand in silence for 60 seconds. Actually listen.",
+      "Look for things you never notice in daylight: graffiti, sleeping cats, delivery workers, reflections.",
+      "Find somewhere to sit that feels secret — a staircase, a dock, a rooftop ledge (safe ones).",
+      "Pick a late-night food spot: doner kebab at 2AM is a sidequest staple.",
+      "Head home before it gets too late. Document your favorite moment."
+    ],
+    tip: "The best conversations happen after midnight. Budget time for that — don't rush back."
+  },
+  {
+    id: 16,
+    cat: "sport",
+    emoji: "🧗",
+    title: "Urban Bouldering Blitz",
+    tagline: "Find low walls, ledges, and obstacles. Climb everything under 2 meters. Spider-Man training.",
+    diff: "medium",
+    diffLabel: "Medium",
+    budget: "~0€/person",
+    walk: "2–4 km",
+    needs: [
+      "Comfortable shoes with grip (no flip-flops)",
+      "Chalk or talc powder for grip (~2€ split, optional)",
+      "A phone to film and score",
+      "Low walls, benches, ledges, boulders — anything climbable under 2m",
+      "Band-aids just in case"
+    ],
+    steps: [
+      "Scout a route through your neighborhood with at least 8 climbable obstacles under 2 meters.",
+      "Define the challenge: each obstacle must be climbed, traversed, or vaulted cleanly.",
+      "Time each player on the full course. Falls = 10 second penalty.",
+      "Style points: bonus for clean moves, creative solutions, or sticking a landing.",
+      "3 rounds. Best cumulative time wins.",
+      "Film the best attempts for an edit later."
+    ],
+    tip: "Stick to public structures under 2m — perfectly legal in France. Avoid private property and anything above head height."
+  },
+  {
+    id: 17,
+    cat: "food",
+    emoji: "🧀",
+    title: "Blind Cheese Tribunal",
+    tagline: "Buy 5 mystery cheeses. Blindfolded tasting. Judge them like your life depends on it.",
+    diff: "easy",
+    diffLabel: "Easy",
+    budget: "~5€/person",
+    walk: "1 km",
+    needs: [
+      "5 different cheeses (~15€ total, split 3 ways)",
+      "Crackers or baguette slices (~2€)",
+      "3 blindfolds (bandanas, scarves)",
+      "Paper and pen for scoring",
+      "Napkins and water to cleanse palate"
+    ],
+    steps: [
+      "One person buys 5 cheeses secretly — a mix of soft, hard, stinky, and mild.",
+      "Number each cheese 1–5 on hidden labels.",
+      "Blindfold the other two. Feed them each cheese on a cracker.",
+      "Each person rates every cheese 1–10 on: taste, texture, and 'would I eat this again'.",
+      "Try to guess the type of cheese. Correct guesses earn bonus points.",
+      "Reveal identities. The cheese with the highest average is crowned Supreme Fromage."
+    ],
+    tip: "France has 1,200+ cheeses. Go to a fromagerie and ask for their weirdest affordable option. The stinkier, the funnier."
+  },
+  {
+    id: 18,
+    cat: "wild",
+    emoji: "🎭",
+    title: "Public Dare Roulette",
+    tagline: "Write 20 dares. Draw randomly. Execute in public. No backing out.",
+    diff: "hard",
+    diffLabel: "Hard",
+    budget: "~0€/person",
+    walk: "1–3 km",
+    needs: [
+      "20 small paper strips with dares written on them",
+      "A hat or jar to draw from",
+      "A busy public area (town square, park, shopping street)",
+      "Phones to film proof",
+      "Thick skin and zero shame"
+    ],
+    steps: [
+      "Night before: each person writes 7 dares (keep them legal, embarrassing but harmless).",
+      "Good dare examples: sing a full song chorus to a stranger, ask 3 people for directions to a place that doesn't exist, do 20 push-ups in the middle of a crosswalk, compliment 5 strangers in a row.",
+      "Go to a busy area. Each player draws 3 dares from the hat.",
+      "You MUST complete all 3. Refusing = you owe the group a pastry each.",
+      "Film every dare. Vote on the best performance at the end.",
+      "Winner gets immunity from the hardest dare next round."
+    ],
+    tip: "Keep dares embarrassing but never mean-spirited. No involving unwilling strangers in anything uncomfortable. Consent matters."
+  },
+  {
+    id: 19,
+    cat: "chill",
+    emoji: "📸",
+    title: "Photo Battle Royale",
+    tagline: "Same 10 prompts. Different eyes. Best photographer wins.",
+    diff: "easy",
+    diffLabel: "Easy",
+    budget: "~0€/person",
+    walk: "2–4 km",
+    needs: [
+      "A phone with a camera (any quality)",
+      "A shared list of 10 photo prompts",
+      "2-hour time limit",
+      "Optional: a cheap frame (~3€) as a trophy for the winner's best shot"
+    ],
+    steps: [
+      "Create 10 creative prompts: 'something that tells a story', 'the most interesting shadow', 'a color that doesn't belong', 'hidden beauty', 'chaos in motion'.",
+      "Everyone gets the same list. Split up — you cannot follow each other.",
+      "2 hours. One photo per prompt. Phone cameras only, no editing.",
+      "Meet back up. Project all photos on someone's laptop or scroll through together.",
+      "Each player votes on the best photo per prompt (can't vote for yourself).",
+      "Most votes total = Photography Champion. Print or frame the winning shot."
+    ],
+    tip: "Shoot from weird angles — ground level, through objects, reflections in puddles. The weirdest perspectives always win."
+  },
+  {
+    id: 20,
+    cat: "gaming",
+    emoji: "🗺️",
+    title: "GeoGuessr IRL",
+    tagline: "One person drops the others somewhere unknown. They must find their way back. No GPS.",
+    diff: "hard",
+    diffLabel: "Hard",
+    budget: "~3€/person (transport)",
+    walk: "3–5 km",
+    needs: [
+      "Public transport tickets or passes (~3€)",
+      "Blindfolds for the ride",
+      "A phone (GPS OFF for the challenge, ON for emergencies only)",
+      "A time limit (2 hours max)",
+      "Knowledge of the general city area"
+    ],
+    steps: [
+      "Player A is the 'dropper'. Players B and C are blindfolded on a bus/tram.",
+      "Player A rides a random route for 15–20 minutes, then drops the others at an unknown stop.",
+      "Blindfolds off. GPS stays OFF. You must navigate home using only street signs, landmarks, and asking locals.",
+      "Player A tracks their location secretly via shared location (safety net).",
+      "First one home wins. Fastest time is the record to beat.",
+      "Rotate the dropper role each round."
+    ],
+    tip: "Start with an area you vaguely know. Gradually increase difficulty by going further out. Always have emergency GPS access."
+  },
+  {
+    id: 21,
+    cat: "sport",
+    emoji: "🏃",
+    title: "Staircase Sprint Championship",
+    tagline: "Find the tallest public staircase. Race to the top. Lungs will burn.",
+    diff: "hard",
+    diffLabel: "Hard",
+    budget: "~0€/person",
+    walk: "1–2 km",
+    needs: [
+      "Running shoes",
+      "Water bottles (1L each minimum)",
+      "A public staircase with 100+ steps (Montmartre vibes)",
+      "A stopwatch app",
+      "Stretching space at the bottom"
+    ],
+    steps: [
+      "Find a long public staircase — at least 100 steps. Research your city for the best ones.",
+      "Warm up: 5 minutes of dynamic stretching at the bottom. Do NOT skip this.",
+      "Round 1: full sprint to the top. Time each player.",
+      "Walk back down slowly (knees will thank you).",
+      "Round 2: two steps at a time. Time it again.",
+      "Round 3: backwards walk up (careful). More of a balance challenge.",
+      "Best combined time across all 3 rounds wins."
+    ],
+    tip: "Pump your arms hard — it adds 10% speed on stairs. Lean slightly forward. Short quick steps beat long strides."
+  },
+  {
+    id: 22,
+    cat: "chill",
+    emoji: "📝",
+    title: "Time Capsule Drop",
+    tagline: "Write letters to your future selves. Seal them. Bury them. Come back in a year.",
+    diff: "easy",
+    diffLabel: "Easy",
+    budget: "~2€/person",
+    walk: "1–3 km",
+    needs: [
+      "Paper and pens",
+      "A waterproof container (Tupperware, zip-lock bags, mason jar ~3€ split)",
+      "Duct tape to seal",
+      "A memorable but discreet burial/hiding spot",
+      "A phone to GPS-mark the exact spot"
+    ],
+    steps: [
+      "Each person writes a letter to their future self. Include: predictions, current worries, goals, a joke, and a secret.",
+      "Add extras: a photo printout, a receipt from today, a drawing, a playlist.",
+      "Seal everything in the waterproof container. Tape it shut.",
+      "Find a hiding spot: under a specific rock, inside a hollow tree, behind a loose brick. Be creative.",
+      "GPS mark the exact coordinates. Take a photo of the spot for reference.",
+      "Set a calendar reminder for exactly 1 year from today.",
+      "Come back in 1 year. Open together. Prepare for emotions."
+    ],
+    tip: "Write honestly. The more raw and real your letter is, the harder it'll hit when you read it. Don't hold back."
+  },
+  {
+    id: 23,
+    cat: "food",
+    emoji: "🌮",
+    title: "€1 Meal Challenge",
+    tagline: "Cook a full meal for €1 per person. Creativity is the only ingredient that's free.",
+    diff: "hard",
+    diffLabel: "Hard",
+    budget: "~1€/person",
+    walk: "1 km (to the shop)",
+    needs: [
+      "€1 per person — strict budget",
+      "Access to a kitchen or camping stove",
+      "Pantry basics allowed (salt, pepper, oil, butter — things already at home)",
+      "Plates and cutlery",
+      "Receipts to prove spending"
+    ],
+    steps: [
+      "Each person gets exactly €1. Go to a budget supermarket (Lidl, Aldi, Leader Price).",
+      "Buy whatever you can. Bulk items, loose vegetables, day-old bread — all fair game.",
+      "Return home. You have 45 minutes to cook a full meal.",
+      "Pantry staples (salt, oil, spices already at home) are free. Everything else must be from your €1.",
+      "Plate it up properly. Presentation counts.",
+      "Blind taste test: rate each meal without knowing whose is whose.",
+      "Best meal wins. Loser washes all dishes."
+    ],
+    tip: "Eggs, rice, onions, and day-old baguettes are your best friends at this budget. A single egg + rice + soy sauce = legit meal."
+  },
+  {
+    id: 24,
+    cat: "gaming",
+    emoji: "🎲",
+    title: "Dice Controls Your Day",
+    tagline: "Every decision today is made by rolling a die. Breakfast, route, activity — all random.",
+    diff: "medium",
+    diffLabel: "Medium",
+    budget: "~5€/person",
+    walk: "varies",
+    needs: [
+      "1 six-sided die (or a dice app)",
+      "A pre-written option list for each decision point",
+      "€5 budget each for whatever the dice demands",
+      "A full free day",
+      "An open mind"
+    ],
+    steps: [
+      "Write 6 options for each decision point the night before. Categories: breakfast, morning activity, lunch, afternoon activity, dinner, evening.",
+      "Wake up. Roll for breakfast. Whatever comes up, that's what you eat.",
+      "Roll for every decision throughout the day: which direction to walk, what to buy, where to sit.",
+      "If the die says 'swim in the fountain' — negotiate to the nearest legal equivalent.",
+      "Document every roll and its outcome. Create a log of the chaos.",
+      "At the end of the day, rate the experience. Would you live like this forever?"
+    ],
+    tip: "Pre-vet your option lists to keep things legal and affordable. But leave at least 1 wild option per category. That's the fun."
+  },
+  {
+    id: 25,
+    cat: "wild",
+    emoji: "🔥",
+    title: "Bonfire & Stories Night",
+    tagline: "Build a legal fire. Cook on it. Tell stories until the flames die.",
+    diff: "medium",
+    diffLabel: "Medium",
+    budget: "~4€/person",
+    walk: "2–4 km",
+    needs: [
+      "A designated fire pit area (beach, campsite, or barbecue zone in a park)",
+      "Firewood — collect deadfall or buy a small bundle (~5€ split)",
+      "Marshmallows (~2€) and sticks for roasting",
+      "Lighters or matches",
+      "Water or sand to extinguish at the end",
+      "Blankets to sit on"
+    ],
+    steps: [
+      "Find a legal fire spot — many French beaches and designated campfire areas allow this. Check local rules.",
+      "Gather or buy firewood. You need kindling (small sticks), medium sticks, and a few logs.",
+      "Build the fire: tinder nest → kindling teepee → medium wood → logs on top once it's going.",
+      "Once it's stable, roast marshmallows. Golden brown, not charcoal (unless you're a psychopath).",
+      "Each person tells their best story — scariest experience, most embarrassing moment, or a full-on fiction tale.",
+      "Vote on the best story. Winner is the official group storyteller.",
+      "Extinguish fully with water. Stir the ashes. Make sure it's DEAD cold."
+    ],
+    tip: "Bring aluminum foil and wrap bananas stuffed with chocolate pieces. Put them in the coals for 10 minutes. Thank me later."
+  },
+  {
+    id: 26,
+    cat: "sport",
+    emoji: "⚽",
+    title: "Freestyle Trick Battle",
+    tagline: "One ball. Trick shots only. Judges score style, difficulty, and landing.",
+    diff: "medium",
+    diffLabel: "Medium",
+    budget: "~0€/person",
+    walk: "1 km",
+    needs: [
+      "1 football/soccer ball (borrow or bring from home)",
+      "A flat area — park, empty parking lot, basketball court",
+      "Phone for filming",
+      "Paper and pen for scoring"
+    ],
+    steps: [
+      "Each player gets 3 rounds. Each round = 1 trick attempt.",
+      "Round 1 — Juggling: most consecutive touches without dropping. Feet, knees, head all count.",
+      "Round 2 — Skill Move: perform your best skill move (around the world, rainbow flick, elastico). Others judge 1–10.",
+      "Round 3 — Trick Shot: set up a target (backpack, between two shoes). Score from distance or with style.",
+      "Bonus Round — 1v1 panna battle: nutmeg your opponent in a small circle. First to 3 nutmegs wins.",
+      "Total points across all rounds crowns the Freestyle King."
+    ],
+    tip: "Don't know tricks? YouTube 'beginner football freestyle tricks' — you can learn an Around The World in 30 minutes."
+  },
+  {
+    id: 27,
+    cat: "chill",
+    emoji: "🎵",
+    title: "Silent Disco Park Session",
+    tagline: "Three phones. Three playlists. One park. Dance like nobody's watching.",
+    diff: "easy",
+    diffLabel: "Easy",
+    budget: "~0€/person",
+    walk: "1 km",
+    needs: [
+      "Wireless earbuds or headphones (one pair each)",
+      "Pre-made playlists on Spotify/YouTube (each person makes one)",
+      "A public park with some space",
+      "Zero shame"
+    ],
+    steps: [
+      "Each person creates a 30-minute playlist before meeting up. Genre must be different from the others.",
+      "Meet at the park. Everyone puts in their earbuds and hits play at the same time.",
+      "Dance. Fully commit. You're all hearing different music — that's the point.",
+      "Every 10 minutes: swap playlists. Pass your phone to the person on your left.",
+      "After all 3 rotations: vote on the best playlist.",
+      "Final round: everyone listens to the winning playlist together. One big dance."
+    ],
+    tip: "Do this near a café terrace for maximum confused spectator reactions. The weirder you dance, the better."
+  },
+  {
+    id: 28,
+    cat: "food",
+    emoji: "🍕",
+    title: "DIY Pizza From Scratch",
+    tagline: "Make dough. Build toppings. Use a park BBQ or oven. No delivery allowed.",
+    diff: "medium",
+    diffLabel: "Medium",
+    budget: "~4€/person",
+    walk: "1 km",
+    needs: [
+      "Flour, yeast, salt, olive oil (dough: ~2€ total)",
+      "Tomato passata or crushed tomatoes (~1€)",
+      "Mozzarella (~2€) + toppings of choice (~3€)",
+      "An oven, portable pizza oven, or BBQ with a lid",
+      "Baking tray or aluminum foil",
+      "Rolling pin (or a wine bottle works)"
+    ],
+    steps: [
+      "Make the dough: 300g flour + 1tsp yeast + 1tsp salt + 1tbsp olive oil + 200ml warm water. Knead 10 min.",
+      "Let it rise for 1 hour under a damp cloth. This is non-negotiable.",
+      "While it rises: prep toppings. Slice everything thin.",
+      "Divide dough into 3 balls. Roll each one flat on a floured surface.",
+      "Sauce → cheese → toppings. Don't overload or the center will be soggy.",
+      "Cook at max heat: oven at 250°C for 8–10 min, BBQ with lid closed for 6–8 min.",
+      "Rate each pizza. Best pizza maker gets crowned Pizzaiolo Supreme."
+    ],
+    tip: "Add a pinch of sugar to your tomato sauce and a drizzle of olive oil on top after baking. Restaurant-level for zero extra cost."
+  },
+  {
+    id: 29,
+    cat: "gaming",
+    emoji: "🕵️",
+    title: "Assassin Tag Marathon",
+    tagline: "Each player gets a target. Eliminate them with a sticker. Last one alive wins.",
+    diff: "hard",
+    diffLabel: "Hard",
+    budget: "~1€/person",
+    walk: "3–5 km",
+    needs: [
+      "Small stickers or tape pieces (~1€ for a pack)",
+      "A defined play zone (your neighborhood, a park, a district)",
+      "Phones for communication and proof",
+      "A full afternoon (3–4 hours minimum)",
+      "Rules sheet printed or shared"
+    ],
+    steps: [
+      "Each player is secretly assigned a target (in a 3-player game: A hunts B, B hunts C, C hunts A).",
+      "To 'eliminate' your target: place a sticker on their back without them noticing.",
+      "If you get stickered, you're out. Send a photo to the group chat as proof.",
+      "Safe zones: inside any shop, sitting on a bench, or within 2 meters of a stranger.",
+      "The game lasts 4 hours or until only 1 player remains.",
+      "Stealth is everything. Plan ambushes, use distractions, recruit the environment."
+    ],
+    tip: "The best eliminations happen when you've been casually walking with your target for 5 minutes and they forgot you're hunting them."
+  },
+  {
+    id: 30,
+    cat: "wild",
+    emoji: "🌊",
+    title: "Build a Raft & Float",
+    tagline: "Scrap wood, rope, and courage. Build a raft. Float on a calm lake. Pray.",
+    diff: "hard",
+    diffLabel: "Hard",
+    budget: "~5€/person",
+    walk: "2–4 km",
+    needs: [
+      "Scrap wood, pallets, or large branches (forage or reclaim — check local recycling points)",
+      "Rope or strong twine (~5€)",
+      "Empty sealed plastic bottles or jerrycans for flotation",
+      "A calm lake, pond, or slow river with easy access",
+      "Life jackets or strong swimmers only — non-negotiable",
+      "Dry bag for phones"
+    ],
+    steps: [
+      "Source materials: pallets from local businesses (ask permission), deadfall branches, bottles from recycling.",
+      "Design your raft: flat platform minimum 1m x 1.5m. Lash bottles underneath as flotation.",
+      "Build on shore. Lash everything with rope — square lashings for corners, diagonal for bracing.",
+      "Test stability: push it in shallow water first. Stand on it near shore before going deep.",
+      "If it floats: paddle out with makeshift paddles (planks, brooms, even your hands).",
+      "Stay in shallow, calm water. This is about the build, not the voyage.",
+      "Document everything. Disassemble and clean up after — leave no trace."
+    ],
+    tip: "6 sealed 2L bottles can support roughly 12kg. You need about 40–50 bottles for one adult. Collect in advance."
+  }
+];
+
+function renderCard(q, idx) {
+  const diffClass = q.diff === 'easy' ? 'easy' : q.diff === 'medium' ? 'medium' : '';
+  const catLabel = { sport: '🔥 Sport', chill: '🌿 Chill', gaming: '🎮 Gaming', food: '🍖 Food', wild: '💀 Wild' }[q.cat];
+  return `
+  <div class="card" data-cat="${q.cat}" style="animation-delay:${idx * 0.06}s">
+    <div class="card-accent-bar"></div>
+    <div class="card-header">
+      <div class="quest-num">#${String(q.id).padStart(2,'0')}</div>
+      <div class="card-title-block">
+        <div class="card-category">${catLabel}</div>
+        <div class="card-title">${q.title}</div>
+      </div>
+      <div class="card-emoji">${q.emoji}</div>
+    </div>
+    <div class="card-tagline">${q.tagline}</div>
+    <div class="meta-row">
+      <div class="meta-chip chip-diff ${diffClass}">${q.diffLabel}</div>
+      <div class="meta-chip chip-budget">${q.budget}</div>
+      <div class="meta-chip chip-walk">🥾 ${q.walk}</div>
+    </div>
+    <button class="expand-btn" onclick="toggle(this)">
+      What You Need & Steps <span class="arrow">▼</span>
+    </button>
+    <div class="card-details">
+      <div class="card-body">
+        <div class="section-label">What You Need</div>
+        <ul class="needs-list">${q.needs.map(n=>`<li>${n}</li>`).join('')}</ul>
+        <div class="section-label">How To Do It</div>
+        <ol class="steps-list">${q.steps.map(s=>`<li>${s}</li>`).join('')}</ol>
+        <div class="pro-tip"><strong>⭐ Pro Tip</strong><br>${q.tip}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggle(btn) {
+  const card = btn.closest('.card');
+  card.classList.toggle('expanded');
+  btn.querySelector('.arrow').style.transform = card.classList.contains('expanded') ? 'rotate(180deg)' : 'rotate(0deg)';
+  const details = card.querySelector('.card-details');
+  details.style.display = card.classList.contains('expanded') ? 'block' : 'none';
+}
+
+function filter(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.card').forEach(c => {
+    if (cat === 'all' || c.dataset.cat === cat) {
+      c.classList.remove('hidden');
+    } else {
+      c.classList.add('hidden');
+    }
+  });
+}
+
+const grid = document.getElementById('grid');
+grid.innerHTML = quests.map((q, i) => renderCard(q, i)).join('');
+
+// --- WHEEL LOGIC ---
+const canvas = document.getElementById('wheelCanvas');
+const ctx = canvas ? canvas.getContext('2d') : null;
+let currentRotation = 0;
+let isSpinning = false;
+let winnerId = null;
+
+const catColors = {
+  sport: '#ff4f1f',
+  chill: '#00e5ff',
+  gaming: '#39ff14',
+  food: '#f5c400',
+  wild: '#d966ff'
+};
+
+const catLabels = {
+  sport: '🔥 Sport',
+  chill: '🌿 Chill',
+  gaming: '🎮 Gaming',
+  food: '🍖 Food',
+  wild: '💀 Wild'
+};
+
+function drawWheel() {
+  if (!ctx) return;
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height / 2;
+  const radius = canvas.width / 2;
+  const sliceAngle = (2 * Math.PI) / quests.length;
+  
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  quests.forEach((q, i) => {
+    const startAngle = i * sliceAngle;
+    const endAngle = startAngle + sliceAngle;
+    
+    // Draw slice
+    ctx.beginPath();
+    ctx.moveTo(centerX, centerY);
+    ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+    ctx.closePath();
+    
+    ctx.fillStyle = catColors[q.cat] || '#ffffff';
+    ctx.fill();
+    ctx.strokeStyle = '#0a0a0f';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    
+    // Draw text
+    ctx.save();
+    ctx.translate(centerX, centerY);
+    ctx.rotate(startAngle + sliceAngle / 2);
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#0a0a0f';
+    ctx.font = '900 22px "Barlow Condensed"';
+    ctx.fillText('#' + q.id, radius - 20, 0);
+    ctx.restore();
+  });
+  
+  // Draw center dot
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, 30, 0, 2 * Math.PI);
+  ctx.fillStyle = '#0a0a0f';
+  ctx.fill();
+  ctx.strokeStyle = '#f5c400';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+}
+
+function openWheel() {
+  document.getElementById('wheelOverlay').classList.add('active');
+  drawWheel();
+}
+
+function closeWheel() {
+  if (isSpinning) return; // Prevent closing while spinning
+  document.getElementById('wheelOverlay').classList.remove('active');
+  document.getElementById('winnerPopup').classList.remove('active');
+}
+
+function spinWheel() {
+  if (isSpinning) return;
+  isSpinning = true;
+  document.getElementById('spinBtn').disabled = true;
+  document.getElementById('winnerPopup').classList.remove('active');
+  
+  // Random spins (5 to 10 full rotations + random angle)
+  const spins = 5 + Math.random() * 5;
+  const degrees = spins * 360;
+  currentRotation += degrees;
+  
+  canvas.style.transform = `rotate(${currentRotation}deg)`;
+  
+  setTimeout(() => {
+    isSpinning = false;
+    document.getElementById('spinBtn').disabled = false;
+    
+    const normalizedRotation = currentRotation % 360;
+    const sliceAngle = 360 / quests.length;
+    const pointerAngle = 270;
+    const offset = (pointerAngle - normalizedRotation + 360) % 360;
+    const winnerIndex = Math.floor(offset / sliceAngle);
+    
+    const winner = quests[winnerIndex];
+    winnerId = winner.id;
+    
+    document.getElementById('winnerEmoji').innerText = winner.emoji;
+    document.getElementById('winnerCat').innerText = catLabels[winner.cat];
+    document.getElementById('winnerText').innerText = winner.title;
+    document.getElementById('winnerTagline').innerText = winner.tagline;
+    
+    document.getElementById('winnerPopup').classList.add('active');
+    
+  }, 4000); // matches CSS transition time
+}
+
+function closeWheelAndShow(id) {
+  closeWheel();
+  
+  // Reset filters to ALL
+  const allBtn = document.querySelector('.filter-btn[onclick*="all"]');
+  if(allBtn) filter('all', allBtn);
+  
+  setTimeout(() => {
+    const cards = document.querySelectorAll('.card');
+    let targetCard = null;
+    cards.forEach(c => {
+      const numEl = c.querySelector('.quest-num');
+      if (numEl && numEl.innerText.includes('#' + String(id).padStart(2,'0'))) {
+        targetCard = c;
+      }
+    });
+    
+    if (targetCard) {
+      if (!targetCard.classList.contains('expanded')) {
+        targetCard.querySelector('.expand-btn').click();
+      }
+      targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      
+      const originalShadow = targetCard.style.boxShadow;
+      targetCard.style.boxShadow = '0 0 40px var(--cat-color)';
+      targetCard.style.borderColor = 'var(--cat-color)';
+      setTimeout(() => {
+        targetCard.style.boxShadow = originalShadow;
+        targetCard.style.borderColor = '';
+      }, 3000);
+    }
+  }, 400);
+}
+</script>
+</body>
+</html>
